@@ -1,10 +1,20 @@
 package spellcheck;
 
+import java.util.Hashtable;
 import java.util.Iterator;
 
 public class HashDictionary implements Dictionary{
 
-	public HashDictionary(){};
+	private Hashtable<Integer, String> dict;
+	
+	//Simply call a Dictionary Exception when called
+	public HashDictionary() throws DictionaryException{};
+	
+	/**
+	 * 
+	 * @param sH - User HashCode
+	 * @param sF - The Load Limit for the HashTable
+	 */
 	public HashDictionary(StringHashCode sH, Float sF) {};
 	
 	@Override

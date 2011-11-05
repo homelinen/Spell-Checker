@@ -21,7 +21,7 @@ public class spell {
 	    // To read from specific files, comment the 2 lines above and 
             // uncomment 2 lines below 
             //dict  = new BufferedInputStream(new FileInputStream("C:\\dictionary.txt"));
-	    //file  = new BufferedInputStream(new FileInputStream("C:\\checkText.txt"));
+            //file  = new BufferedInputStream(new FileInputStream("C:\\checkText.txt"));
 	   
          }
          catch (IOException e){ // catch exceptions caused by file input/output errors
