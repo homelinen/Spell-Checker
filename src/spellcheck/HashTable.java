@@ -1,7 +1,10 @@
 package spellcheck;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Set;
 
 public class HashTable<K,V> {
 
@@ -60,10 +63,11 @@ public class HashTable<K,V> {
 				
 		while (!prime) {
 			
-			//Increase candidate number
+			
 			
 			prime = true;
 			
+			//Checks if candidate is divisible by trail^2
 			while (trial * trial <= candidate ) {
 				if (candidate % trial == 0) {
 					prime = false;
@@ -73,11 +77,38 @@ public class HashTable<K,V> {
 			
 			
 			if (!prime) {
+				//Increase candidate number as the current in non-prime
 				candidate++;
 			}
 		}
 		
 		return candidate;
+	}
+
+	/**
+	 * Empty the HashTable
+	 */
+	public void clear() {
+		table = new ArrayList<V>();
+		
+	}
+
+	public boolean containsKey(Object arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean containsValue(Object arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isEmpty() {
+		if (size() != 0 ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 		
 }
