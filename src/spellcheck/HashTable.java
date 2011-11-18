@@ -1,23 +1,37 @@
 package spellcheck;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
-public class HashTable extends Hashtable {
+public class HashTable<K,V> {
 
+	private ArrayList<V> table;
+	
 	public HashTable() {
-		super();
-		
+				
 	}
 
 	public HashTable(int initialCapacity, float loadFactor) {
-		super(initialCapacity, loadFactor);
+		
+		table = new ArrayList<V>(initialCapacity);
 		
 	}
 
-	@Override
+	public void add() {
+		
+	}
+	
+	public V remove() {
+		return null;
+	}
+	
 	public void rehash() {
 		int prime = findNextPrime(size() * 2);
 		
+	}
+	
+	public int size() {
+		return table.size();
 	}
 	
 	/**

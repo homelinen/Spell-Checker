@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 public class HashDictionary implements Dictionary {
 
-	private Hashtable<Integer, String> dict;
+	private HashTable<Integer, String> dict;
 	
 	//Simply call a Dictionary Exception when called
 	public HashDictionary() throws DictionaryException{};
@@ -15,7 +15,7 @@ public class HashDictionary implements Dictionary {
 	 * @param sF - The Load Limit for the HashTable
 	 */
 	public HashDictionary(StringHashCode sH, Float sF) {
-		dict = new Hashtable<Integer, String>(7, sF);
+		dict = new HashTable<Integer, String>(7, sF);
 		
 	};
 	
