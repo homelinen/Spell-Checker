@@ -1,9 +1,8 @@
 package spellcheck;
 
-import java.util.Hashtable;
 import java.util.Iterator;
 
-public class HashDictionary implements Dictionary{
+public class HashDictionary implements Dictionary {
 
 	private Hashtable<Integer, String> dict;
 	
@@ -15,7 +14,10 @@ public class HashDictionary implements Dictionary{
 	 * @param sH - User HashCode
 	 * @param sF - The Load Limit for the HashTable
 	 */
-	public HashDictionary(StringHashCode sH, Float sF) {};
+	public HashDictionary(StringHashCode sH, Float sF) {
+		dict = new Hashtable<Integer, String>(7, sF);
+		
+	};
 	
 	@Override
 	public void insert(String key) throws DictionaryException {
@@ -42,9 +44,9 @@ public class HashDictionary implements Dictionary{
 	}
 	
 
-	public String averNumProbes() {
+	public float averNumProbes() {
 		// TODO Auto-generated method stub
-		return null;
+		return (float) 0.0;
 	}
 	
 }
