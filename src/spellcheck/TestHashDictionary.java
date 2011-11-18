@@ -24,7 +24,14 @@ public class TestHashDictionary {
 
 	// Test 2: add and find an entry .
 	Integer i = new Integer(1);
-	h.insert("R3C1");
+	
+	try {
+		h.insert("R3C1");
+	} catch (DictionaryException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+	
 	if (!h.find("R3C1")) 
 	    System.out.println("***Test 2 failed");
 	else System.out.println("   Test 2 succeeded");

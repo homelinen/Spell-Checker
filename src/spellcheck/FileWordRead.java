@@ -45,7 +45,7 @@ public class FileWordRead {
 				endOfFile = true;
 				return(null);
 		    }
-	    nextChar = Character.toLowerCase((char) ch);
+		    nextChar = Character.toLowerCase((char) ch);
         }
 
 		while ( nextChar >= 'a' && nextChar <= 'z' ){
