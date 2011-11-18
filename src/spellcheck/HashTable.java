@@ -13,11 +13,13 @@ public class HashTable<K,V> {
 
 	public HashTable(int initialCapacity, float loadFactor) {
 		
-		table = new ArrayList<V>(initialCapacity);
+		//Get the next prime for the capacity
+		int primeCap = findNextPrime(initialCapacity);
+		table = new ArrayList<V>(primeCap);
 		
 	}
 
-	public void add() {
+	public void add(V value) {
 		
 	}
 	
@@ -25,6 +27,16 @@ public class HashTable<K,V> {
 		return null;
 	}
 	
+	public boolean contains(V value) {
+		return true;
+	}
+	
+	public V getValue(K key) {
+		return;
+	}
+	/**
+	 * Increase the size of the collection and re-order elements
+	 */
 	public void rehash() {
 		int prime = findNextPrime(size() * 2);
 		
