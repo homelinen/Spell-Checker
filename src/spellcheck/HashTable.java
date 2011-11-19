@@ -3,10 +3,11 @@ package spellcheck;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class HashTable<K,V> {
+public class HashTable<V> {
 
 	private ArrayList<V> table;
 	
@@ -30,20 +31,20 @@ public class HashTable<K,V> {
 	 * @param value
 	 */
 	public void insert(V value) {
-		int hash = hashCode.giveCode(value);
+		int hashVal = hashCode.giveCode(value);
 		
 		int count = 0;
 		
 		boolean valid=false;
-		hash= compress(hash);
+		int hash = compress(hashVal);
 		
 		//Create a copy of the Compressed hash
 		int compressed = hash;
 		
 		while (!valid) {
-			if (containsKey(hash)) {
+			if (table.get(hash) != null) {
 				count++;
-				hash = compressAgain(compressed, hash, count);
+				hash = compressAgain(hashVal, compressed, count);
 			} else {
 				valid=true;
 			}
@@ -60,17 +61,20 @@ public class HashTable<K,V> {
 	 * Compresses a hash code once
 	 */
 	public int compress(int hash) {
+		
+		//a and b should be randomly selected on every re-hash
+		// to ensure a cannot be divided by N
 		int a = 241;
 		int b = 13;
 		
-		int compress = (a * hash) + b;
+		int compress = ((a * hash) + b) % size();
 		return compress;
 	}
 	
 	/**
 	 * Hash the code a second, third, nth time (specified by j)
-	 * @param k
-	 * @param hash
+	 * @param k - the original, uncompressed value
+	 * @param hash - the first compressed hash
 	 * @param j
 	 * @return
 	 */
@@ -79,22 +83,47 @@ public class HashTable<K,V> {
 		//Half the size and find the next prime
 		int d = findNextPrime(size()/2);
 		
-		int compress =  ((d - (k % d)) + (j * hash)) % size(); 
+		int rehash = d - (k % d);
+		
+		int compress =  (hash + (j*rehash)) % size(); 
 		
 		return compress;
 	}
 	
-	public V remove() {
-		return null;
+	public boolean remove(V value) {
+		return false;
 	}
 	
-	public boolean contains(V value) {
-		return true;
+	/**
+	 * Find if a value exists or not in the table
+	 * 
+	 * @param value
+	 * @return 
+	 */
+	public boolean find(V value) {
+		int hashVal = hashCode.giveCode(value);
+		
+		int count=1;
+		boolean found = false;
+		
+		int hash = compress(hashVal);
+		int compressed = hash;
+		
+		while (!found) {
+			if (table.get(hash) != value && table.get(hash) != null ){
+				hash = compressAgain(hashVal, compressed, count);
+				count++;
+			} else if (table.get(hash) == null){
+				//If the bucket is empty, the value isn't here, break loop
+				break;
+			} else {
+				found=true;
+			}
+		}
+		
+		return found;
 	}
 	
-	public V getValue(K key) {
-		return;
-	}
 	/**
 	 * Increase the size of the collection and re-order elements
 	 */
@@ -149,6 +178,14 @@ public class HashTable<K,V> {
 	public void clear() {
 		table = new ArrayList<V>();
 		
+	}
+	
+	/**
+	 * returns an Iterator over all values in the table
+	 * @return
+	 */
+	public Iterator<V> elements() {
+		return table.iterator();
 	}
 
 	public boolean containsKey(Object arg0) {
