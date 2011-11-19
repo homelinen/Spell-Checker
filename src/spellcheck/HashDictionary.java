@@ -8,7 +8,9 @@ public class HashDictionary implements Dictionary {
 	private int averNumOps;
 	
 	//Simply call a Dictionary Exception when called
-	public HashDictionary() throws DictionaryException{};
+	public HashDictionary() throws DictionaryException{
+		throw new DictionaryException();
+	};
 	
 	/**
 	 * 
@@ -30,8 +32,9 @@ public class HashDictionary implements Dictionary {
 	@Override
 	public void insert(String key) throws DictionaryException {
 		if (!dict.contains(key)) {
-			dict.insert(key);
-			
+			dict.insert(key);			
+		} else {
+			throw new DictionaryException();
 		}
 		averNumOps++;
 	}
