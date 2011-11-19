@@ -47,9 +47,7 @@ public class HashTable implements Iterator<String> {
 		int hashVal = hashCode.giveCode(value);
 		
 		int count = 0;
-		
-		
-		
+			
 		float curLoad = (float) load / (float) size();
 		
 		//Check the load factor, rehash if necessary
@@ -58,8 +56,7 @@ public class HashTable implements Iterator<String> {
 		}
 		
 		boolean valid=false;
-		
-		
+				
 		int hash = Math.abs(compress(hashVal));
 
 		//Create a copy of the Compressed hash

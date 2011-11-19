@@ -34,7 +34,7 @@ public class HashDictionary implements Dictionary {
 		if (!dict.contains(key)) {
 			dict.insert(key);			
 		} else {
-			throw new DictionaryException();
+			throw new DictionaryException(key + " has been inserted already");
 		}
 		averNumOps++;
 	}
