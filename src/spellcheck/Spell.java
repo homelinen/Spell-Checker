@@ -19,7 +19,7 @@ public class Spell {
 	 * @param word
 	 * @return - A list of new words
 	 */
-	public LinkedList<String> subLetter(String word) {
+	public static LinkedList<String> subLetter(String word) {
 		LinkedList<String> words = new LinkedList<String>();
 		
 		char letter = 'a';
@@ -36,19 +36,89 @@ public class Spell {
 				if (dictionary.find(newWord)) {
 					words.add(newWord);
 				}
+				//Reset buffer
+				buffer = new StringBuffer(word);
 			}
 		}
 		
 		return words;
 	}
 	
-	public LinkedList<String> omitLetter(String word) {
+	public static LinkedList<String> omitLetter(String word) {
 		LinkedList<String> words = new LinkedList<String>();
 		
+		String newWord="";
+		
+		StringBuffer buffer = new StringBuffer(word);
+		for (int i=0; i<word.length(); i++) {
+			newWord = buffer.delete(i, i).toString();
+			
+			if (dictionary.find(newWord)) {
+				words.add(newWord);
+			}
+			//Reset buffer
+			buffer = new StringBuffer(word);
+		}
 		return words;
 	}
 	
-    public static void main(String[] args) throws java.io.IOException, DictionaryException{
+	/**
+	 * Try inserting a letter at every position to make a new word
+	 * @param word
+	 * @return
+	 */
+	public static LinkedList<String> insertLetter(String word) {
+		LinkedList<String> words = new LinkedList<String>();
+		
+		String newWord="";
+		
+		StringBuffer buffer = new StringBuffer(word);
+		for (int i=0; i<word.length(); i++) {
+			for (char letter='a'; letter <= 'z'; letter++) {
+				newWord = buffer.insert(i, letter).toString();
+				
+				if (dictionary.find(newWord)) {
+					words.add(newWord);
+				}
+				
+				//Reset buffer
+				buffer = new StringBuffer(word);
+			}
+		}
+		return words;
+	}
+	
+	/**
+	 * Swap every adjacent letter in turn to make a new word
+	 * @param word
+	 * @return
+	 */
+	public static LinkedList<String> swapLetter(String word) {
+		
+		LinkedList<String> words = new LinkedList<String>();
+		
+		String newWord="";
+		
+		StringBuffer buffer = new StringBuffer(word);
+		String toSwap = "";
+		
+		for (int i=0; i<word.length(); i++) {
+			toSwap = buffer.substring(i, i+1);
+			buffer.delete(i,i+1);
+			newWord = buffer.insert(i, toSwap).toString();
+			
+			if (dictionary.find(newWord)) {
+				words.add(newWord);
+			}
+			
+			//Reset buffer
+			buffer = new StringBuffer(word);
+		}
+		return words;
+		
+	}
+	
+    public static void main(String[] args) throws java.io.IOException{
     	
     	Spell spell = new Spell();
     	
@@ -58,12 +128,12 @@ public class Spell {
 			System.exit(0);
 		}
 		
-		BufferedInputStream file = null;
-		BufferedReader dict = null;
-
+		BufferedInputStream file = null, dict = null;
+		FileWordRead wordReader;
+		
 		try {
 
-			dict = new BufferedReader(new FileReader(new File(args[0])));
+			dict = new BufferedInputStream(new FileInputStream(args[0]));
 			file = new BufferedInputStream(new FileInputStream(args[1]));
 			// To read from specific files, comment the 2 lines above and
 			// uncomment 2 lines below
@@ -77,16 +147,33 @@ public class Spell {
 			System.out.println("Check your file name");
 			System.exit(0);
 		}
+				
+		wordReader = new FileWordRead(dict);
 		
-		String word = "";
-		
-		//Add the word list to the dictionary
-		while (word != null) {
-			word = dict.readLine().trim();
-			
-			dictionary.insert(word);
+		while (wordReader.hasNextWord()) {
+			try {
+				dictionary.insert(wordReader.nextWord());
+			} catch (DictionaryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
+		wordReader = new FileWordRead(file);
+		String word="";
+		LinkedList<String> incorrect = new LinkedList<String>();
+		while (wordReader.hasNextWord()) {
+			
+			word = wordReader.nextWord();
+			if (!dictionary.find(word)) {
+				System.out.print(word + " => ");
+				
+				System.out.print(subLetter(word).toString());
+				System.out.print(omitLetter(word).toString());
+				System.out.print(insertLetter(word).toString());
+				System.out.print(swapLetter(word).toString() + "\n");
+			}
+		}
 		
 		
         
