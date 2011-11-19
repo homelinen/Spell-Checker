@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public class HashTable implements Iterator<String> {
@@ -81,7 +82,7 @@ public class HashTable implements Iterator<String> {
 	 */
 	public int compress(int hash) {
 		
-		//a and b should be randomly selected on every re-hash
+		//a should be randomised
 		// to ensure a cannot be divided by N
 		int a = 241;
 		int b = 13;
@@ -112,15 +113,15 @@ public class HashTable implements Iterator<String> {
 		return Math.abs(compress);
 	}
 	
-	public void remove(String value) {
+	public void remove(String value) throws DictionaryException {
 		int hash = getDoubleHash(value);
 		
 		if (hash>-1) {
 			//Need to create a special value
-			table[hash] = null;
+			table[hash] = "";
 			load--;
 		} else {
-			//throw null pointer exception
+			throw new DictionaryException();
 		}
 	}
 	
@@ -188,7 +189,11 @@ public class HashTable implements Iterator<String> {
 		
 		for (int i=0; i<oldTable.length; i++) {
 			if (oldTable[i] != null) {
-				insert(oldTable[i]);
+				
+				//Check that the old placeholder isn't added
+				if (!oldTable[i].equals("")) {
+					insert(oldTable[i]);
+				}
 			}
 		}
 	}
@@ -249,7 +254,7 @@ public class HashTable implements Iterator<String> {
 		int tempIndex = curIndex;
 		
 		//Skip over null values
-		while (table[tempIndex] == null) {
+		while (table[tempIndex] == null || table[tempIndex].equals("")) {
 			if (tempIndex + 1 < size()) {
 				
 				tempIndex++;
@@ -270,7 +275,7 @@ public class HashTable implements Iterator<String> {
 	@Override
 	public String next() {
 		
-		while (table[curIndex] == null) {		
+		while (table[curIndex] == null || table[curIndex].equals("")) {		
 			curIndex++;
 		}
 		
@@ -282,7 +287,7 @@ public class HashTable implements Iterator<String> {
 
 	@Override
 	public void remove() {
-		table[curIndex]	= null;	
+		table[curIndex]	= "";	
 	}
 		
 	public int getProbes() {
