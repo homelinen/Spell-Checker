@@ -4,7 +4,8 @@ import java.util.Iterator;
 
 public class HashDictionary implements Dictionary {
 
-	private HashTable<Integer, String> dict;
+	private HashTable dict;
+	private int averNumOps;
 	
 	//Simply call a Dictionary Exception when called
 	public HashDictionary() throws DictionaryException{};
@@ -15,38 +16,58 @@ public class HashDictionary implements Dictionary {
 	 * @param sF - The Load Limit for the HashTable
 	 */
 	public HashDictionary(StringHashCode sH, Float sF) {
-		dict = new HashTable<Integer, String>(7, sF);
+		dict = new HashTable(7, sF, sH);
+		averNumOps = 0;
 		
-	};
+	}
 	
+	/**
+	 * Insert a value into the dictionary, only if that value doesn't already exist
+	 * 
+	 * TODO: 
+	 *   - Must throw an exception if a key already exists
+	 */
 	@Override
 	public void insert(String key) throws DictionaryException {
-		// TODO Auto-generated method stub
-		
+		if (!dict.contains(key)) {
+			dict.insert(key);
+			
+		}
+		averNumOps++;
 	}
 
 	@Override
 	public void remove(String key) throws DictionaryException {
-		// TODO Auto-generated method stub
-		
+		dict.remove(key);
+		averNumOps++;
 	}
 
 	@Override
 	public boolean find(String key) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		averNumOps++;
+		
+		if (dict.contains(key)) {
+			
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 
 	@Override
-	public Iterator elements() {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterator<String> elements() {
+		Iterator<String> it = dict;
+		
+		return it;
 	}
 	
 
 	public float averNumProbes() {
 		// TODO Auto-generated method stub
-		return (float) 0.0;
+		float averProbes = (float)dict.getProbes() / (float)averNumOps;
+		return averProbes;
 	}
 	
 }
