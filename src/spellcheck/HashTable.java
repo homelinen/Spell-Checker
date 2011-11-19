@@ -47,18 +47,20 @@ public class HashTable implements Iterator<String> {
 		
 		int count = 0;
 		
-		boolean valid=false;
-		int hash = compress(hashVal);
+		
 		
 		float curLoad = (float) load / (float) size();
-		
-		System.out.println(load + ", " + curLoad + ", " + loadFactor);
 		
 		//Check the load factor, rehash if necessary
 		if (curLoad >= loadFactor) {
 			rehash();
 		}
 		
+		boolean valid=false;
+		
+		
+		int hash = Math.abs(compress(hashVal));
+
 		//Create a copy of the Compressed hash
 		int compressed = hash;
 		while (!valid) {
@@ -84,9 +86,9 @@ public class HashTable implements Iterator<String> {
 		int a = 241;
 		int b = 13;
 		
-		int compress = ((a * hash) + b) % size();
+		int compress = Math.abs(((a * hash) + b) % size());
 		
-		return Math.abs(compress);
+		return compress;
 	}
 	
 	/**
@@ -107,7 +109,7 @@ public class HashTable implements Iterator<String> {
 		
 		int compress =  (hash + (j*rehash)) % size(); 
 
-		return compress;
+		return Math.abs(compress);
 	}
 	
 	public void remove(String value) {
@@ -149,8 +151,9 @@ public class HashTable implements Iterator<String> {
 		
 		int hash = compress(hashVal);
 		int compressed = hash;
+
 		
-		while (!found) {
+		while (!found && count < size()) {
 			if (table[hash] == null){
 				//If the bucket is empty, the value isn't here, break loop
 				break;
