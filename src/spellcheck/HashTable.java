@@ -7,12 +7,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class HashTable<V> {
+public class HashTable implements Iterator<String> {
 
-	private ArrayList<V> table;
+	private String[] table;
 	
 	//Should this be a field?
 	private StringHashCode hashCode;
+	private float loadFactor;
+	private int load;
+	
+	//for Iterator
+	private int curIndex;
 	
 	public HashTable() {
 				
@@ -22,15 +27,18 @@ public class HashTable<V> {
 		
 		//Get the next prime for the capacity
 		int primeCap = findNextPrime(initialCapacity);
-		table = new ArrayList<V>(primeCap);
+		table = new String[primeCap];
 		
+		this.loadFactor = loadFactor;
+		
+		load = 0;
 	}
 
 	/**
 	 * Add a value to the HashMap
 	 * @param value
 	 */
-	public void insert(V value) {
+	public void insert(String value) {
 		int hashVal = hashCode.giveCode(value);
 		
 		int count = 0;
@@ -42,7 +50,7 @@ public class HashTable<V> {
 		int compressed = hash;
 		
 		while (!valid) {
-			if (table.get(hash) != null) {
+			if (table[hash] != null) {
 				count++;
 				hash = compressAgain(hashVal, compressed, count);
 			} else {
@@ -50,11 +58,16 @@ public class HashTable<V> {
 			}
 		}
 		
-		/*
-		 * Need to check load factor here, or somewhere
-		 */
 		
-		table.add(hash, value);
+		float curLoad = load / size();
+		
+		//Check the load factor, rehash if necessary
+		if (curLoad >= loadFactor) {
+			rehash();
+		}
+		
+		table[hash] = value;
+		load++;
 	}
 	
 	/**
@@ -90,8 +103,16 @@ public class HashTable<V> {
 		return compress;
 	}
 	
-	public boolean remove(V value) {
-		return false;
+	public void remove(String value) {
+		int hash = getDoubleHash(value);
+		
+		if (hash>-1) {
+			//Need to create a special value
+			table[hash] = null;
+			load--;
+		} else {
+			//throw null pointer exception
+		}
 	}
 	
 	/**
@@ -100,7 +121,20 @@ public class HashTable<V> {
 	 * @param value
 	 * @return 
 	 */
-	public boolean find(V value) {
+	public boolean contains(String value) {
+		if (getDoubleHash(value) > -1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Try to double hash the value
+	 * Return -1 if nothing was found
+	 * @return
+	 */
+	private int getDoubleHash(String value) {
 		int hashVal = hashCode.giveCode(value);
 		
 		int count=1;
@@ -110,18 +144,21 @@ public class HashTable<V> {
 		int compressed = hash;
 		
 		while (!found) {
-			if (table.get(hash) != value && table.get(hash) != null ){
+			if (table[hash].equals(value) && table[hash] != null ){
 				hash = compressAgain(hashVal, compressed, count);
 				count++;
-			} else if (table.get(hash) == null){
+			} else if (table[hash] == null){
 				//If the bucket is empty, the value isn't here, break loop
 				break;
 			} else {
 				found=true;
 			}
 		}
-		
-		return found;
+		if (found) {
+			return hash;
+		} else {
+			return -1;
+		}
 	}
 	
 	/**
@@ -130,10 +167,21 @@ public class HashTable<V> {
 	public void rehash() {
 		int prime = findNextPrime(size() * 2);
 		
+		//Create a copy of the old array
+		String[] oldTable = table;
+		
+		//Increase the size of the old table
+		table = new String[prime];
+		
+		for (int i=0;i<size();i++) {
+			if (oldTable[i] != null) {
+				insert(oldTable[i]);
+			}
+		}
 	}
 	
 	public int size() {
-		return table.size();
+		return table.length;
 	}
 	
 	/**
@@ -172,38 +220,56 @@ public class HashTable<V> {
 		return candidate;
 	}
 
-	/**
-	 * Empty the HashTable
-	 */
-	public void clear() {
-		table = new ArrayList<V>();
-		
-	}
-	
-	/**
-	 * returns an Iterator over all values in the table
-	 * @return
-	 */
-	public Iterator<V> elements() {
-		return table.iterator();
-	}
-
-	public boolean containsKey(Object arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean containsValue(Object arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public boolean isEmpty() {
 		if (size() != 0 ) {
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Check if there is a next value for the Iterator
+	 */
+	@Override
+	public boolean hasNext() {
+		int tempIndex = curIndex;
+		
+		//Skip over null values
+		while (table[tempIndex] == null) {
+			if (tempIndex +1 < size()) {
+				tempIndex++;
+			} else {
+				break; 
+			}
+		}
+		
+		if (tempIndex < size()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * return the next element in the Iterator
+	 */
+	@Override
+	public String next() {
+		
+		while (table[curIndex] == null ) {
+			curIndex++;
+		}
+		
+		String el = table[curIndex];
+		curIndex++;
+		
+		return el;
+	}
+
+	@Override
+	public void remove() {
+		table[curIndex]	= null;	
 	}
 		
 }
