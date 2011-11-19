@@ -12,9 +12,11 @@ public class HashTable implements Iterator<String> {
 	private String[] table;
 	
 	//Should this be a field?
-	private StringHashCode hashCode;
+	private HashCode hashCode;
 	private float loadFactor;
 	private int load;
+	
+	private int probes;
 	
 	//for Iterator
 	private int curIndex;
@@ -23,13 +25,15 @@ public class HashTable implements Iterator<String> {
 				
 	}
 
-	public HashTable(int initialCapacity, float loadFactor) {
+	public HashTable(int initialCapacity, float loadFactor, HashCode sH) {
 		
 		//Get the next prime for the capacity
 		int primeCap = findNextPrime(initialCapacity);
 		table = new String[primeCap];
 		
 		this.loadFactor = loadFactor;
+		
+		hashCode = sH;
 		
 		load = 0;
 	}
@@ -46,9 +50,17 @@ public class HashTable implements Iterator<String> {
 		boolean valid=false;
 		int hash = compress(hashVal);
 		
+		float curLoad = (float) load / (float) size();
+		
+		System.out.println(load + ", " + curLoad + ", " + loadFactor);
+		
+		//Check the load factor, rehash if necessary
+		if (curLoad >= loadFactor) {
+			rehash();
+		}
+		
 		//Create a copy of the Compressed hash
 		int compressed = hash;
-		
 		while (!valid) {
 			if (table[hash] != null) {
 				count++;
@@ -57,15 +69,7 @@ public class HashTable implements Iterator<String> {
 				valid=true;
 			}
 		}
-		
-		
-		float curLoad = load / size();
-		
-		//Check the load factor, rehash if necessary
-		if (curLoad >= loadFactor) {
-			rehash();
-		}
-		
+			
 		table[hash] = value;
 		load++;
 	}
@@ -81,7 +85,8 @@ public class HashTable implements Iterator<String> {
 		int b = 13;
 		
 		int compress = ((a * hash) + b) % size();
-		return compress;
+		
+		return Math.abs(compress);
 	}
 	
 	/**
@@ -93,13 +98,15 @@ public class HashTable implements Iterator<String> {
 	 */
 	public int compressAgain(int k, int hash, int j) {
 		
+		probes++;
+		
 		//Half the size and find the next prime
 		int d = findNextPrime(size()/2);
 		
 		int rehash = d - (k % d);
 		
 		int compress =  (hash + (j*rehash)) % size(); 
-		
+
 		return compress;
 	}
 	
@@ -144,16 +151,19 @@ public class HashTable implements Iterator<String> {
 		int compressed = hash;
 		
 		while (!found) {
-			if (table[hash].equals(value) && table[hash] != null ){
-				hash = compressAgain(hashVal, compressed, count);
-				count++;
-			} else if (table[hash] == null){
+			if (table[hash] == null){
 				//If the bucket is empty, the value isn't here, break loop
 				break;
+			} 
+			
+			if (!table[hash].equals(value)){
+				hash = compressAgain(hashVal, compressed, count);
+				count++;
 			} else {
 				found=true;
 			}
 		}
+		
 		if (found) {
 			return hash;
 		} else {
@@ -173,7 +183,7 @@ public class HashTable implements Iterator<String> {
 		//Increase the size of the old table
 		table = new String[prime];
 		
-		for (int i=0;i<size();i++) {
+		for (int i=0; i<oldTable.length; i++) {
 			if (oldTable[i] != null) {
 				insert(oldTable[i]);
 			}
@@ -237,14 +247,14 @@ public class HashTable implements Iterator<String> {
 		
 		//Skip over null values
 		while (table[tempIndex] == null) {
-			if (tempIndex +1 < size()) {
+			if (tempIndex + 1 < size()) {
+				
 				tempIndex++;
 			} else {
 				break; 
 			}
 		}
-		
-		if (tempIndex < size()) {
+		if (tempIndex + 1 < size()) {
 			return true;
 		} else {
 			return false;
@@ -257,7 +267,7 @@ public class HashTable implements Iterator<String> {
 	@Override
 	public String next() {
 		
-		while (table[curIndex] == null ) {
+		while (table[curIndex] == null) {		
 			curIndex++;
 		}
 		
@@ -272,4 +282,7 @@ public class HashTable implements Iterator<String> {
 		table[curIndex]	= null;	
 	}
 		
+	public int getProbes() {
+		return probes;
+	}
 }

@@ -179,6 +179,7 @@ public class TestHashDictionary {
 					+ " , average num. of  probes is " + h.averNumProbes()
 					+ " time in milseconds is " + time);
 			lF = lF + (float) 0.05;
+			
 		}
 
 	}
