@@ -27,9 +27,11 @@ public class ListDictionary implements Dictionary {
 	public void insert(String key) throws DictionaryException {
 		
 		//Only add if the key is not already present
-		if ( !this.find(key) ) {
+		if (!this.find(key) ) {
 			dict.add(key);
-		} 
+		} else {
+			throw new DictionaryException();
+		}
 			
 	}
 
@@ -38,7 +40,11 @@ public class ListDictionary implements Dictionary {
 	 */
 	@Override
 	public void remove(String key) throws DictionaryException {
-		dict.remove(key);
+		if (!this.find(key)) {
+			dict.remove(key);
+		} else {
+			throw new DictionaryException();
+		}
 
 	}
 
@@ -46,8 +52,7 @@ public class ListDictionary implements Dictionary {
 	 * Returns true if the Dictionary contains the specified element
 	 */
 	@Override
-	public boolean find(String key) {
-		
+	public boolean find(String key) {	
 		return dict.contains(key);
 	}
 
