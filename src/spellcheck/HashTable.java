@@ -11,8 +11,7 @@ import java.util.Set;
 public class HashTable implements Iterator<String> {
 
 	private String[] table;
-	
-	//Should this be a field?
+
 	private HashCode hashCode;
 	private float loadFactor;
 	private int load;
@@ -80,7 +79,7 @@ public class HashTable implements Iterator<String> {
 	public int compress(int hash) {
 		
 		//a should be randomised
-		// to ensure a cannot be divided by N
+		// to ensure a cannot be divided by size()
 		int a = 241;
 		int b = 13;
 		

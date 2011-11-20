@@ -1,5 +1,9 @@
 package spellcheck;
 
+/**
+ * @author Calum Gilchrist
+ * 
+ */
 import java.io.*;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,10 +11,12 @@ import java.util.LinkedList;
 public class Spell {
    
 	public static HashDictionary dictionary;
+	//public static ListDictionary dictionary;
 	
 	public Spell() {   
 		StringHashCode sH = new StringHashCode();
-         dictionary = new HashDictionary(sH, (float)0.5);
+        dictionary = new HashDictionary(sH, (float)0.75);
+		//dictionary = new ListDictionary();
 	}
          
 	/**
@@ -170,10 +176,10 @@ public class Spell {
 		
 		wordReader = new FileWordRead(file);
 		String word="";
-		LinkedList<String> incorrect = new LinkedList<String>();
 		LinkedList<String> suggested = new LinkedList<String>();
 		Iterator<String> it;
 		boolean first=true;
+		
 		while (wordReader.hasNextWord()) {
 			
 			word = wordReader.nextWord().toLowerCase();
@@ -190,13 +196,17 @@ public class Spell {
 				
 				it = suggested.iterator();
 				
-				while (it.hasNext()) {
-					if (first) { 
-						System.out.print(it.next());
-						first = false;
-					} else {
-						System.out.print(", " + it.next());
+				if (!suggested.isEmpty()) {
+					while (it.hasNext()) {
+						if (first) { 
+							System.out.print(it.next());
+							first = false;
+						} else {
+							System.out.print(", " + it.next());
+						}
 					}
+				} else {
+					System.out.print("Could not find word in dictionary");
 				}
 				System.out.println("");
 			} 
@@ -205,8 +215,7 @@ public class Spell {
 		endTime = System.currentTimeMillis();
 		time = (int) (endTime - startTime);
 		
-		System.out.println("\nProgram took: " + time + "ms to complete.");
+		System.out.println("\nProgram took " + time + "ms to complete.");
 		
-        
     }
 }
